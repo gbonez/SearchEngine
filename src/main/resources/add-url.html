@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add to Database</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 0px;
+        }
+        
+        .header-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .form-container {
+            margin-top: 10px;
+        }
+
+        .url-input {
+            width: 400px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .add-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .go-back-button {
+            display: block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add URL to Web Crawler Index</h1>
+    <p class="header-text">Add information to the database by providing a new URL below.</p>
+    <div class="form-container">
+        <label for="urlInput">URL:</label>
+        <input type="text" id="urlInput" class="url-input" name="urlInput" placeholder="Enter URL">
+        <button class="add-button" onclick="promptNumber()">Add</button>
+        <button class="go-back-button" onclick="goBack()">← Go Back</button>
+    </div>
+
+    <script>
+        function promptNumber() {
+            var url = document.getElementById("urlInput").value;
+            if (url !== "") {
+                var number = prompt("Please enter a number:");
+                if (number !== null && !isNaN(number)) {
+                    addUrl(url, number);
+                } else {
+                    alert("Invalid number. Please try again.");
+                }
+            } else {
+                alert("Please provide a valid URL.");
+            }
+        }
+
+        function addUrl(url, number) {
+    fetch("/add-url?url=" + encodeURIComponent(url) + "&number=" + number, { method: "POST" })
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error("Error: " + response.status);
+            }
+        })
+        .then(message => {
+            alert(message);
+        })
+        .catch(error => {
+            console.error("An error occurred:", error);
+        });
+}
+
+function goBack() {
+            window.location.href = "welcome";
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View the Database</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 0px;
+        }
+        
+        .header-text {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .word {
+            margin-bottom: 15px;
+        }
+
+        .word-name {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .word-name::before {
+            content: "\25B6";
+            display: inline-block;
+            margin-right: 5px;
+            transform: rotate(90deg);
+            transition: transform 0.3s ease;
+        }
+
+        .word-name.opened::before {
+            transform: rotate(0deg);
+        }
+
+        .file-results {
+            margin-top: 5px;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .file-results li {
+            padding: 0px 0px;
+            margin-bottom: 10px;
+            background-color: white;
+            color: #4CAF50;
+        }
+
+        .file-results li a {
+            text-decoration: none;
+            color: #4CAF50;
+        }
+        
+        .button-container{
+			display: flex;
+			justify-content: flex-start;;
+		}
+        
+        .common-button {
+            display: flex;
+            margin-top: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+        
+        .search-form {
+            margin-top: 0px;
+        }
+
+        .search-input {
+            width: 400px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>View the Database</h1>
+    <p class="header-text">Click a word to view all associated links in the database.</p>
+    <div class="search-form">
+        <input type="text" id="searchInput" class="search-input" placeholder="Enter your database query">
+        <button class="search-button" onclick="performSearch()">Search</button>
+    </div>
+	<div class="button-container">
+		<button class="common-button" onclick="goBack()">← Go Back</button>
+		<button class="common-button" onclick="location.href='download'">Download Database</button>
+	</div>
+    
+    <div id="invertedIndex">
+        <ul class="file-results">
+            {results}
+        </ul>
+    </div>
+</body>
+<script>
+    function goBack() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var wordParam = urlParams.get('word');
+  
+    if (wordParam !== null) {
+		window.location.href = "/index";
+    } else {
+        window.location.href = "/welcome";
+    }
+}
+
+ function performSearch() {
+    var searchInput = document.getElementById('searchInput');
+    var query = searchInput.value;
+    window.location.href = 'index?word=' + query;
+}
+ window.onload = function() {
+        var searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('keydown', function(event) {
+			//Enter pressed?
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                performSearch();
+            }
+        });
+    };
+
+
+</script>
+
+</html>

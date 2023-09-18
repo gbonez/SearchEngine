@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%m %throwable{short.message}%n"/>
+        </Console>
+
+        <File name="Debug" fileName="debug.log" append="false" immediateFlush="true">
+            <PatternLayout pattern="[%02sequenceNumber %level{lowerCase=true}] %file:%line %thread: %m %throwable%n"/>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Root level="OFF">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Debug"/>
+        </Root>
+
+        <Logger name="edu.usfca.cs272.WorkQueue" level="OFF" additivity="false">
+            <AppenderRef ref="Debug"/>
+            <AppenderRef ref="Console"/>
+        </Logger>
+    </Loggers>
+</Configuration>

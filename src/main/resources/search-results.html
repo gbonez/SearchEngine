@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .search-form {
+            margin-top: 160px;
+        }
+
+        .search-input {
+            width: 400px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .search-results {
+            margin-top: 20px;
+        }
+
+        .search-results ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .search-results li {
+            margin-bottom: 10px;
+        }
+
+        .search-results a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .query {
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+
+        .header {
+            background-color: #4CAF50;
+            padding: 12px;
+            color: white;
+        }
+
+        .arrow {
+            display: inline-block;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        
+        .favorite-star {
+    color: gold;
+    margin-left: 10px;
+}
+
+
+        .menu {
+            display: none;
+            margin-top: 5px;
+        }
+
+        .arrow.open + .menu {
+            display: block;
+        }
+
+        .menu-button {
+            display: inline-block;
+            margin-top: 5px;
+            margin-right: 5px;
+        }
+
+        .show {
+            display: block !important;
+        }
+        
+        .go-back-button {
+            display: block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1 class="search-results">Search Results</h1>
+         <button class="go-back-button" onclick="goBack()">← Go Back</button>
+    </div>
+    <p class="query">Showing results for: {query}</p>
+    <div class="search-results">
+        <ul>
+            {results}
+        </ul>
+    </div>
+    <script>
+		
+function addFavorite(resultId, button) {
+    console.log("addFavorite is called with resultId: " + resultId);
+
+    var favorites = Cookies.get('favorites');
+    var favoriteIds = favorites ? favorites.split('|') : [];
+
+    if (favoriteIds.indexOf(resultId) === -1) {
+        favoriteIds.push(resultId);
+
+        Cookies.set('favorites', favoriteIds.join('|'));
+
+        button.textContent = "Added to Favorites";
+        var li = button.parentNode;
+        li.insertAdjacentHTML('beforeend', '<span class="favorite-star">&#9733;</span>');
+    }
+}
+
+
+        function markFavorites() {
+			console.log('Favorites:', favorites);
+            var favorites = Cookies.get('favorites');
+            var favoriteIds = favorites ? favorites.split('|') : [];
+
+        for (var i = 0; i < favoriteIds.length; i++) {
+            var li = document.querySelector('li[data-result-id="' + favoriteIds[i] + '"]');
+            if (li) {
+                li.insertAdjacentHTML('beforeend', '<span class="favorite-star">&#9733;</span>');
+                var button = li.querySelector('.menu-button');
+                if (button) {
+                    button.textContent = "Added to Favorites";
+                }
+            }
+        }
+    }
+
+    function toggleMenu(arrow) {
+        arrow.classList.toggle('open');
+        var menu = arrow.nextElementSibling;
+        menu.classList.toggle('show');
+    }
+    
+    function goBack() {
+            window.location.href = "welcome";
+        }
+
+   window.onload = function() {
+    markFavorites();
+
+    var arrows = document.getElementsByClassName('arrow');
+    for (var i = 0; i < arrows.length; i++) {
+        arrows[i].addEventListener('click', function() {
+            toggleMenu(this);
+        });
+    }
+};
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .search-form {
+            margin-top: 10px;
+        }
+
+        .search-input {
+            width: 400px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .search-menu {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            margin-top: 5px;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .search-menu li {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .search-menu li:hover {
+            background-color: #f1f1f1;
+        }
+        
+         .favorites-menu {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            margin-top: 5px;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .favorites-menu li {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .favorites-menu li:hover {
+            background-color: #f1f1f1;
+        }
+
+        .clear-favorites-button {
+            display: none;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            cursor: pointer;
+        }
+        
+        .common-button {
+    display: block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-start;
+}
+
+
+    </style>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+</head>
+<body>
+    <h1>Welcome to the Search Page</h1>
+    <!-- Search Bar/Button -->
+    <div class="search-form">
+        <input type="text" id="searchInput" class="search-input" placeholder="Enter your search query">
+        <button class="search-button" onclick="performSearch()">Search</button>
+    </div>
+    
+    
+    <!-- Generic Button -->
+    <div class="button-container">
+    <button id="clearHistoryButton" class="common-button" onclick="clearSearchHistory()">Clear History</button>
+    <button id="favoritesButton" class="common-button" onclick="toggleFavoritesMenu()">Show Favorites</button>
+    <button class="common-button" onclick="location.href='add-url'">Add to Database</button>
+    <button class="common-button" onclick="location.href='index'">View Database</button>
+     </div>
+	
+    
+    <!-- Search Menu -->
+    <div class="search-menu" id="searchMenu">
+        <ul id="menuList"></ul>
+    </div>
+     <!-- Favorites Menu -->
+    <div class="favorites-menu" id="favoritesMenu">
+    <ul id="favoritesList"></ul>
+	</div>
+    <script>
+    
+    function hideSearchMenu() {
+        var searchMenu = document.getElementById('searchMenu');
+        searchMenu.style.display = 'none';
+    }
+
+    function showSearchMenu() {
+        var searchInput = document.getElementById('searchInput');
+        var searchMenu = document.getElementById('searchMenu');
+        var menuList = document.getElementById('menuList');
+        menuList.innerHTML = '';
+        var searchResults = Cookies.get('searchResults');
+        if (searchResults) {
+            var queries = searchResults.split('|');
+            for (var i = 0; i < queries.length && i < 5; i++) {
+                var listItem = document.createElement('li');
+                listItem.textContent = queries[i];
+                listItem.addEventListener('click', function() {
+                    searchInput.value = this.textContent;
+                    performSearch();
+                });
+
+                menuList.appendChild(listItem);
+            }
+            if (queries.length > 0) {
+                searchMenu.style.display = 'block';
+            } else {
+                searchMenu.style.display = 'none';
+            }
+        } else {
+            searchMenu.style.display = 'none';
+        }
+        setTimeout(function() {
+            document.getElementById('searchInput').focus();
+        }, 0);
+    }
+    
+    document.getElementById('searchInput').addEventListener('click', showSearchMenu);
+    document.getElementById('searchInput').addEventListener('blur', hideSearchMenu);
+
+    function getQueryParameter(parameterName) {
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        return urlParams.get(parameterName);
+    }
+
+    function performSearch() {
+        var searchInput = document.getElementById('searchInput');
+        var query = searchInput.value;
+
+        var searchResults = Cookies.get('searchResults');
+        var queries = searchResults ? searchResults.split('|') : [];
+        if (queries.indexOf(query) === -1) {
+            queries.unshift(query);
+            if (queries.length > 5) {
+                queries.pop();
+            }
+            Cookies.set('searchResults', queries.join('|'));
+        }
+        window.location.href = 'welcome?query=' + query;
+    }
+    
+    function clearSearchHistory() {
+        Cookies.remove('searchResults');
+        hideSearchMenu();
+    }
+
+
+function toggleFavoritesMenu() {
+    var favoritesMenu = document.getElementById('favoritesMenu');
+
+    if (favoritesMenu.style.display === 'none') {
+        showFavoritesMenu();
+    } else {
+        hideFavoritesMenu();
+    }
+}
+
+function hideFavoritesMenu() {
+    var favoritesMenu = document.getElementById('favoritesMenu');
+    favoritesMenu.style.display = 'none';
+    document.getElementById('favoritesButton').textContent = 'Show Favorites';
+}
+
+function showFavoritesMenu() {
+    var favoritesList = document.getElementById('favoritesList');
+    var favorites = Cookies.get('favorites');
+    if (favorites) {
+        favoritesList.innerHTML = '';
+        favorites.split('|').forEach(function(favorite) {
+            var favoriteElement = document.createElement('li');
+            favoriteElement.textContent = favorite;
+            favoritesList.appendChild(favoriteElement);
+        });
+        var clearFavoritesButton = document.createElement('button');
+        clearFavoritesButton.className = 'clear-favorites-button';
+        clearFavoritesButton.textContent = 'Clear Favorites';
+        clearFavoritesButton.onclick = clearFavorites;
+        favoritesList.appendChild(clearFavoritesButton);
+    }
+    document.getElementById('favoritesMenu').style.display = 'block';
+    document.getElementById('favoritesButton').textContent = 'Hide Favorites';
+}
+
+function clearFavorites() {
+    Cookies.remove('favorites');
+    var favoritesList = document.getElementById('favoritesList');
+    if (favoritesList) {
+        favoritesList.innerHTML = '';
+    }
+    hideFavoritesMenu();
+}
+
+ // Scripts for after page loads
+    window.onload = function() {
+        var searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('keydown', function(event) {
+			//Enter pressed?
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                performSearch();
+            }
+        });
+    };
+    </script>
+</body>
+</html>
